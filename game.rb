@@ -9,8 +9,6 @@ class Minesweeper
         
         raise "A quantidade de minas supera o tamanho do campo. " if @num_mines > @width * @height  
 
-        bombs = Hash.new
-        neighbor = Hash.new
         elements = Hash.new
 
         while num_mines > 0
@@ -18,8 +16,8 @@ class Minesweeper
             y = rand(height) #+ 1
 
             uid = x.to_s + "-" + y.to_s
-            if not bombs.has_key?(uid)
-                bombs[uid] = {"x"=> x, "y"=> y, "tipo"=>"bomb", "flag" =>"0", "value" => 0}
+            if not elements.has_key?(uid)
+                elements[uid] = {"x"=> x, "y"=> y, "tipo"=>"bomb", "flag" =>"0", "value" => 0}
                 
                 num_mines -= 1
                 
@@ -29,11 +27,11 @@ class Minesweeper
                     if i >=0 and j >=0 and i <= width-1 and j <=height-1 and not (i == x and j == y )
                       #puts "#{i} #{j}"
                       nuid = i.to_s + "-" + j.to_s
-                      #neighbor.has_key?(nuid)?neighbor[nuid] += 1 : neighbor[nuid]=1
-                      if neighbor.has_key?(nuid)
-                        neighbor[nuid] = {"x"=> i, "y"=> j, "tipo"=>"neighbor", "flag" =>"0", "value" => neighbor[nuid]["value"] + 1}
+                      #elements.has_key?(nuid)?elements[nuid] += 1 : elements[nuid]=1
+                      if elements.has_key?(nuid)
+                        elements[nuid] = {"x"=> i, "y"=> j, "tipo"=>"neighbor", "flag" =>"0", "value" => elements[nuid]["value"] + 1}
                       else
-                        neighbor[nuid]= {"x"=> i, "y"=> j, "tipo"=>"neighbor", "flag" =>"0", "value" => 1}
+                        elements[nuid]= {"x"=> i, "y"=> j, "tipo"=>"neighbor", "flag" =>"0", "value" => 1}
                       end
                     end
                   end
@@ -46,7 +44,7 @@ class Minesweeper
         #puts bombs
 
 
-        @matrix = Matrix.build(width, height)  { |x1, y1| bombs.has_key?(x1.to_s + "-" + y1.to_s) ? bombs[x1.to_s + "-" + y1.to_s]["tipo"]: neighbor.has_key?(x1.to_s + "-" + y1.to_s)? neighbor[x1.to_s + "-" + y1.to_s]["value"] : 0 }
+        @matrix = Matrix.build(width, height)  { |x1, y1| elements.has_key?(x1.to_s + "-" + y1.to_s)? (elements[x1.to_s + "-" + y1.to_s]["tipo"]!="bomb"? elements[x1.to_s + "-" + y1.to_s]["value"] : "bomb")  : 0 }
             #@matrix = Matrix.build(width, height)  { |row, col| Random.rand(num_mines) }
        # @matrix = Matrix.zero(width, height) 
 
