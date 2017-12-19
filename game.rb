@@ -11,8 +11,8 @@ class Minesweeper
         bombs = Hash.new
 
         while num_mines > 0
-            x = rand(width) + 1
-            y = rand(height) + 1
+            x = rand(width) #+ 1
+            y = rand(height) #+ 1
 
             uid = x.to_s + "-" + y.to_s
             if  not bombs.has_key?(uid)
@@ -23,7 +23,7 @@ class Minesweeper
 
         puts bombs
 
-        @matrix = Matrix.build(width, height)  { |x, y| bombs.has_key?(x.to_s + "-" + y.to_s) ? "Bomb: " + x.to_s + "x" + y.to_s : 0 }
+        @matrix = Matrix.build(width, height)  { |x1, y1| bombs.has_key?(x1.to_s + "-" + y1.to_s) ? "Bomb": 0 }
             #@matrix = Matrix.build(width, height)  { |row, col| Random.rand(num_mines) }
        # @matrix = Matrix.zero(width, height) 
 
