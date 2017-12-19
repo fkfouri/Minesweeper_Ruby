@@ -1,7 +1,8 @@
 
 load 'game.rb'
 
-object = Minesweeper.new(10, 12, 3)
+width, height, num_mines = 6, 6, 3
+object = Minesweeper.new(width, height, num_mines)
 object.hello
 object.area
 
