@@ -10,7 +10,7 @@ class Minesweeper
         raise "A quantidade de minas supera o tamanho do campo. " if @num_mines > @width * @height  
 
         elements = Hash.new
-
+        #dicionario de minas
         while num_mines > 0
             x = rand(width) #+ 1
             y = rand(height) #+ 1
@@ -21,6 +21,7 @@ class Minesweeper
                 
                 num_mines -= 1
                 
+                #dicionario de vizinhos
                 #trecho que circunda o ponto da bomba, vizinhos
                 for i in x-1..x+1
                   for j in y-1..y+1
@@ -38,13 +39,23 @@ class Minesweeper
                 end
             end
         end
+        
+        #dicionario de Zeros, devido necessidade de flag
+        for i in 0..width-1
+          for j in 0..height-1
+            nuid = i.to_s + "-" + j.to_s
+              if not elements.has_key?(nuid)
+                elements[nuid]= {"x"=> i, "y"=> j, "tipo"=>"zero", "flag" =>"0", "value" => 0}
+              end           
+          end
+        end
 
-        #puts neighbor
+        puts elements.length
         puts "==============="
         #puts bombs
 
 
-        @matrix = Matrix.build(width, height)  { |x1, y1| elements.has_key?(x1.to_s + "-" + y1.to_s)? (elements[x1.to_s + "-" + y1.to_s]["tipo"]!="bomb"? elements[x1.to_s + "-" + y1.to_s]["value"] : "bomb")  : 0 }
+        @matrix = Matrix.build(width, height)  { |x1, y1| elements.has_key?(x1.to_s + "-" + y1.to_s)? (elements[x1.to_s + "-" + y1.to_s]["tipo"]!="bomb"? elements[x1.to_s + "-" + y1.to_s]["value"] : "bomb")  : 88 }
             #@matrix = Matrix.build(width, height)  { |row, col| Random.rand(num_mines) }
        # @matrix = Matrix.zero(width, height) 
 
@@ -56,6 +67,6 @@ class Minesweeper
     end
 
     def area
-        puts @width * @height + 2
+        puts @width * @height
     end
 end
