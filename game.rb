@@ -130,7 +130,7 @@ class Minesweeper
         nuid = x.to_s + "-" + y.to_s
         cell = @elements[nuid]
 
-        puts cell
+        #puts cell
         out = false
         if @stillPlaying == false or cell["flag"]==1 or cell["find"] == 1 #nao permite selecionar uma celula com flag ou ja descoberta
             return false
@@ -141,10 +141,36 @@ class Minesweeper
         elsif cell["flag"]==0 and cell["tipo"] == "zero"
             out = true
             cell["find"] = 1
+            cell["value"] = ''
+            puts "=====> x = #{x} and y = #{y}"
+            openArea(x , y)
         end
 
-        @elements[nuid] = cell
+        #@elements[nuid] = cell
 
         return out
     end
+    
+    
+    #responsavel por abrir uma area de Zeros a partir do ponto selecionado
+    def openArea(x, y)
+        for i in x-1..x+1
+            for j in y-1..y+1
+                nuid = "#{i}-#{j}"
+                cell = @elements[nuid]
+                if i >=0 and j >=0 and i <= @width-1 and j <= @height-1 and cell["find"] == 0
+                    if  cell["tipo"] == "zero"
+                        cell["find"] = 1
+                        cell["value"] = ''
+                        openArea(i, j)
+                    else
+                        @elements[nuid]["find"] = 1
+                    end
+                end
+            end
+        end
+        
+    end
+    
+    
 end
