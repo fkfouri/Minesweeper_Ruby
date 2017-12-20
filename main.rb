@@ -39,4 +39,3 @@ puts g.victory
 #Test::Unit::UI::Console::TestRunner.run(my_tests)
 
 
-

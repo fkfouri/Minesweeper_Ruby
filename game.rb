@@ -75,10 +75,6 @@ class Minesweeper
             end
         end
 
-        
-        #puts "==============="
-        #puts elements
-
         @elements = elements
     end
 
@@ -96,10 +92,6 @@ class Minesweeper
         return out# @elements
     end
 
-    #retorna true (ainda em jogo), false (game over por derrota ou por vitoria)
-    def still_playing
-        return @stillPlaying 
-    end
 
     #set flag, somente poe flag se item nao encontrado
     def flag(x,y)
@@ -177,5 +169,12 @@ class Minesweeper
         end
     end
     
+    #retorna true (ainda em jogo), false (game over por derrota ou por vitoria)
+    def still_playing
+        if victory == true
+            @stillPlaying = false
+        end
+        return @stillPlaying 
+    end    
     
 end
