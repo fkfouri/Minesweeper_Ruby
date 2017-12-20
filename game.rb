@@ -8,10 +8,12 @@ class Minesweeper
         @num_mines = num_mines
         @isTest = false
         @stillPlaying = true
+        @findAll = 0
 
         #verifica se eh um teste
         unless test.nil? 
             num_mines = test.x.length
+            @num_mines = num_mines
             @isTest = true
         end
         
@@ -78,11 +80,6 @@ class Minesweeper
         #puts elements
 
         @elements = elements
-        @matrix = Matrix.build(width, height)  { |x1, y1| elements.has_key?(x1.to_s + "-" + y1.to_s)? (elements[x1.to_s + "-" + y1.to_s]["tipo"]!="bomb"? elements[x1.to_s + "-" + y1.to_s]["value"].to_s.rjust(3).ljust(6)  : "bomb".rjust(3).ljust(6))  : 88 }
-            #@matrix = Matrix.build(width, height)  { |row, col| Random.rand(num_mines) }
-       # @matrix = Matrix.zero(width, height) 
-
-        #puts @matrix
     end
 
     #retorna o tamanho/quantidade de campos do jogo
@@ -106,29 +103,26 @@ class Minesweeper
 
     #set flag, somente poe flag se item nao encontrado
     def flag(x,y)
-        nuid = x.to_s + "-" + y.to_s
-        cell = @elements[nuid]
+        cell = @elements["#{x}-#{y}"]
 
-        out = false
         if @stillPlaying == false
             return false
         elsif cell["find"] == 0 
-            out= true
             if cell["flag"] == 0
                 cell["flag"] = 1
             else
                 cell["flag"] = 0
             end
+            return true
         end
-        @elements[nuid] = cell
-        return out
+
+        return false
     end
 
 
 
     def play(x,y)
-        nuid = x.to_s + "-" + y.to_s
-        cell = @elements[nuid]
+        cell = @elements["#{x}-#{y}"]
 
         #puts cell
         out = false
@@ -137,16 +131,18 @@ class Minesweeper
         elsif cell["flag"]==0 and cell["tipo"] == "bomb"
             @stillPlaying = false
             cell["find"] = 1
+            @findAll +=1
             out = true
         elsif cell["flag"]==0 and cell["tipo"] == "zero"
             out = true
             cell["find"] = 1
+            @findAll +=1
             cell["value"] = ''
-            puts "=====> x = #{x} and y = #{y}"
             openArea(x , y)
+        elsif cell["flag"]==0 and cell["tipo"] == "neighbor"
+            cell["find"] = 1
+            @findAll +=1
         end
-
-        #@elements[nuid] = cell
 
         return out
     end
@@ -156,20 +152,29 @@ class Minesweeper
     def openArea(x, y)
         for i in x-1..x+1
             for j in y-1..y+1
-                nuid = "#{i}-#{j}"
-                cell = @elements[nuid]
-                if i >=0 and j >=0 and i <= @width-1 and j <= @height-1 and cell["find"] == 0
+                cell = @elements["#{i}-#{j}"]
+                if i >=0 and j >=0 and i <= @width-1 and j <= @height-1 and cell["find"] == 0 and cell["flag"] == 0
                     if  cell["tipo"] == "zero"
                         cell["find"] = 1
+                        @findAll +=1
                         cell["value"] = ''
                         openArea(i, j)
                     else
-                        @elements[nuid]["find"] = 1
+                        cell["find"] = 1
+                        @findAll +=1
                     end
                 end
             end
         end
-        
+    end
+    
+    #retorna true se o jogo acabou com vitoria
+    def victory
+        if @findAll + @num_mines >= quantityFields
+            return true
+        else
+            return false
+        end
     end
     
     
