@@ -9,6 +9,7 @@ class Minesweeper
         @isTest = false
         @stillPlaying = true
         @findAll = 0
+        @lastSelect = nil
 
         #verifica se eh um teste
         unless test.nil? 
@@ -35,7 +36,7 @@ class Minesweeper
             uid = x.to_s + "-" + y.to_s
             if not elements.has_key?(uid)
                 #puts uid
-                elements[uid] = {"x"=> x, "y"=> y, "tipo"=>"bomb", "flag" =>0, "find" => 0, "value" => 0}
+                elements[uid] = {"x"=> x, "y"=> y, "tipo"=>"bomb", "flag" =>0, "find" => 0, "show" => '.', "value" => "#"}
                  num_mines -= 1
             end
         end
@@ -55,9 +56,9 @@ class Minesweeper
                     if i >=0 and j >=0 and i <= width-1 and j <=height-1 and not (i == x and j == y ) and not bombs.has_key?(nuid)
                         #elements.has_key?(nuid)?elements[nuid] += 1 : elements[nuid]=1
                         if elements.has_key?(nuid) and elements[nuid]["tipo"]=="neighbor"
-                            elements[nuid] = {"x"=> i, "y"=> j, "tipo"=>"neighbor", "flag" =>0, "find" => 0, "value" => elements[nuid]["value"] + 1}
+                            elements[nuid] = {"x"=> i, "y"=> j, "tipo"=>"neighbor", "flag" =>0, "find" => 0, "show" => '.', "value" => elements[nuid]["value"] + 1}
                         else
-                            elements[nuid] = {"x"=> i, "y"=> j, "tipo"=>"neighbor", "flag" =>0, "find" => 0, "value" => 1}
+                            elements[nuid] = {"x"=> i, "y"=> j, "tipo"=>"neighbor", "flag" =>0, "find" => 0, "show" => '.', "value" => 1}
                         end
                     end
                 end
@@ -70,7 +71,7 @@ class Minesweeper
             for j in 0..height-1
                 nuid = i.to_s + "-" + j.to_s
                 if not elements.has_key?(nuid)
-                    elements[nuid]= {"x"=> i, "y"=> j, "tipo"=>"zero", "flag" =>0, "find" => 0, "value" => 0}
+                    elements[nuid]= {"x"=> i, "y"=> j, "tipo"=>"zero", "flag" =>0, "find" => 0, "show" => '.', "value" => 0}
                 end           
             end
         end
@@ -84,11 +85,12 @@ class Minesweeper
     end
 
     def board_state
-        outStruct = Struct.new(:width, :height, :elements)
+        outStruct = Struct.new(:width, :height, :elements, :board_format)
         out = outStruct.new
         out.width = @width
         out.height = @height
         out.elements = @elements
+        out.board_format = {unknown_cell: '.', clear_cell: '', bomb: '#', flag: 'F'}
         return out# @elements
     end
 
@@ -102,8 +104,10 @@ class Minesweeper
         elsif cell["find"] == 0 
             if cell["flag"] == 0
                 cell["flag"] = 1
+                cell["show"] = 'F'
             else
                 cell["flag"] = 0
+                cell["show"] = '.'
             end
             return true
         end
@@ -112,7 +116,7 @@ class Minesweeper
     end
 
 
-
+    #Acao de escolher uma coluna
     def play(x,y)
         cell = @elements["#{x}-#{y}"]
 
@@ -124,40 +128,28 @@ class Minesweeper
             @stillPlaying = false
             cell["find"] = 1
             @findAll +=1
-            out = true
+            cell["show"] = '#'
+            @lastSelect = cell["show"]
+            return true
         elsif cell["flag"]==0 and cell["tipo"] == "zero"
-            out = true
             cell["find"] = 1
             @findAll +=1
-            cell["value"] = ''
+            cell["show"] = ''
+            #cell["value"] = ''
+            @lastSelect = cell["show"]
             openArea(x , y)
+            return true
         elsif cell["flag"]==0 and cell["tipo"] == "neighbor"
-            cell["find"] = 1
+            cell["find"] = 1 
             @findAll +=1
+            cell["show"] = cell["value"]
+            @lastSelect = cell["value"]
+            return true
         end
-
-        return out
     end
-    
-    
-    #responsavel por abrir uma area de Zeros a partir do ponto selecionado
-    def openArea(x, y)
-        for i in x-1..x+1
-            for j in y-1..y+1
-                cell = @elements["#{i}-#{j}"]
-                if i >=0 and j >=0 and i <= @width-1 and j <= @height-1 and cell["find"] == 0 and cell["flag"] == 0
-                    if  cell["tipo"] == "zero"
-                        cell["find"] = 1
-                        @findAll +=1
-                        cell["value"] = ''
-                        openArea(i, j)
-                    else
-                        cell["find"] = 1
-                        @findAll +=1
-                    end
-                end
-            end
-        end
+
+    def showValue
+        return "[#{@lastSelect}]" 
     end
     
     #retorna true se o jogo acabou com vitoria
@@ -175,6 +167,30 @@ class Minesweeper
             @stillPlaying = false
         end
         return @stillPlaying 
-    end    
+    end       
+    
+    #responsavel por abrir uma area de Zeros a partir do ponto selecionado
+    private
+    def openArea(x, y)
+        for i in x-1..x+1
+            for j in y-1..y+1
+                cell = @elements["#{i}-#{j}"]
+                if i >=0 and j >=0 and i <= @width-1 and j <= @height-1 and cell["find"] == 0 and cell["flag"] == 0
+                    if  cell["tipo"] == "zero"
+                        cell["find"] = 1
+                        @findAll +=1
+                        cell["show"] = ''
+                        #cell["value"] = ''
+                        openArea(i, j)
+                    else
+                        cell["find"] = 1
+                        cell["show"] = cell["value"] 
+                        @findAll +=1
+                    end
+                end
+            end
+        end
+    end
+    
     
 end

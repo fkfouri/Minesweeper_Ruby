@@ -4,7 +4,7 @@ require 'test/unit'
 require 'test/unit/ui/console/testrunner'
 
 #teste unitario
-class GameTest < Test::Unit::TestCase
+class GameTest #< Test::Unit::TestCase
     #attr_reader :name
     
     def start

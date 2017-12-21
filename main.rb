@@ -1,5 +1,6 @@
 require_relative 'game'
 require_relative 'PrettyPrinter'
+require_relative 'simplePrinter'
 require_relative 'gameTest'
 
 =begin
@@ -10,16 +11,23 @@ printer = PrettyPrinter.new
 #puts myGame.board_state
 puts printer.print(myGame.board_state)
 
-
+=end
 my_tests = GameTest.new
 g = my_tests.start
+#printer = SimplePrinter.new
 printer = PrettyPrinter.new
 puts printer.print(g.board_state)
-puts "=========================================================="
+puts "======================================================="
 g.play(4,2)
-g.play(1,5)
 puts printer.print(g.board_state)
-puts "=========================================================="
+puts "======================================================="
+
+g.play(4,2)
+g.flag(0,5)
+g.play(1,5)
+
+puts printer.print(g.board_state)
+puts "======================================================="
 
 g.play(0,0)
 g.play(0,1)
@@ -28,7 +36,7 @@ g.play(1,0)
 
 puts printer.print(g.board_state)
 puts g.victory
-=end
+#=end
 
 
 #my_tests = Test::Unit::TestSuite.new("Teste do MinesWeeper")
