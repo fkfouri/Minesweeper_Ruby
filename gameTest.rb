@@ -1,10 +1,10 @@
-require_relative 'game'
+require_relative 'Minesweeper'
 require_relative 'PrettyPrinter'
 require 'test/unit'
 require 'test/unit/ui/console/testrunner'
 
 #teste unitario
-class GameTest #< Test::Unit::TestCase
+class GameTest < Test::Unit::TestCase
     #attr_reader :name
     
     def start
@@ -74,6 +74,39 @@ class GameTest #< Test::Unit::TestCase
         assert_equal(true, g.victory)           # Vitoria do Jogador
         assert_equal(false, g.still_playing)    # acabou o jogo, nao continua jogando
     end
+
+
+=begin
+    def dd
+        my_tests = GameTest.new
+        g = my_tests.start
+        #printer = SimplePrinter.new
+        printer = PrettyPrinter.new
+        puts printer.print(g.board_state)
+        puts "======================================================="
+        g.play(4,2)
+        puts printer.print(g.board_state)
+        puts "======================================================="
+
+        g.play(1,1)
+        puts printer.print(g.board_state)
+        puts "======================================================="
+        g.flag(0,5)
+        g.play(1,5)
+
+
+
+        g.play(0,0)
+        g.play(0,1)
+        g.play(0,2)
+        g.play(1,0)
+
+        puts printer.print(g.board_state({xray: true}))
+        puts g.victory
+    end
+=end
+        
+
 end
 
 #my_tests = Test::Unit::TestSuite.new("Teste do MinesWeeper")

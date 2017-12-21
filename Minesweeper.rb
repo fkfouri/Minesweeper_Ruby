@@ -1,6 +1,5 @@
 require 'matrix'
 
-#http://www.programering.com/a/MTNykzMwATA.html
 class Minesweeper
     def initialize(width, height, num_mines, test = nil)
         @width = width
@@ -84,13 +83,15 @@ class Minesweeper
         return @elements.length
     end
 
-    def board_state
-        outStruct = Struct.new(:width, :height, :elements, :board_format)
+    def board_state(input = nil)
+        outStruct = Struct.new(:width, :height, :elements, :board_format, :input, :stillPlaying)
         out = outStruct.new
         out.width = @width
         out.height = @height
         out.elements = @elements
         out.board_format = {unknown_cell: '.', clear_cell: '', bomb: '#', flag: 'F'}
+        out.input = input
+        out.stillPlaying = still_playing
         return out# @elements
     end
 
@@ -160,6 +161,10 @@ class Minesweeper
             return false
         end
     end
+
+    def victory?
+        return victory
+    end
     
     #retorna true (ainda em jogo), false (game over por derrota ou por vitoria)
     def still_playing
@@ -167,7 +172,12 @@ class Minesweeper
             @stillPlaying = false
         end
         return @stillPlaying 
-    end       
+    end   
+
+    def still_playing?
+        return still_playing
+    end
+        
     
     #responsavel por abrir uma area de Zeros a partir do ponto selecionado
     private
@@ -191,6 +201,5 @@ class Minesweeper
             end
         end
     end
-    
     
 end
